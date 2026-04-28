@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 
-export default function AnimeCharacter({ isTalking }) {
-  const isThinking = isTalking; // In the HTML, thinking and talking were somewhat combined
+export default function AnimeCharacter({ isTalking, isThinking, onClick }) {
 
   // Initial wave on mount
   useEffect(() => {
@@ -11,7 +10,7 @@ export default function AnimeCharacter({ isTalking }) {
 
   return (
     <div className="avatar-panel">
-      <div className="avatar-stage">
+      <div className="avatar-stage" onClick={onClick} style={{ cursor: 'pointer' }} title={isTalking ? "Click to stop speaking" : "Click to hear explanation"}>
         <svg className="avatar-svg" id="avatarSvg" viewBox="0 0 130 220" xmlns="http://www.w3.org/2000/svg" overflow="visible">
           {/* Shadow */}
           <ellipse cx="65" cy="215" rx="38" ry="8" fill="rgba(0,0,0,0.08)" id="avatarShadow"/>
@@ -49,7 +48,7 @@ export default function AnimeCharacter({ isTalking }) {
             </g>
  
             {/* Right arm */}
-            <g className={`avatar-arm-right ${isThinking ? 'talking' : ''}`} id="armRight" style={{ transformOrigin: isThinking ? '98px 97px' : '18px 20px' }}>
+            <g className={`avatar-arm-right ${isTalking ? 'talking' : ''}`} id="armRight" style={{ transformOrigin: isTalking ? '98px 97px' : '18px 20px' }}>
               <rect x="95" y="97" width="20" height="12" rx="6" fill="#c9a84c"/>
               {/* hand */}
               <ellipse cx="115" cy="103" rx="7" ry="7" fill="#f0d9a8"/>
@@ -59,7 +58,7 @@ export default function AnimeCharacter({ isTalking }) {
           </g>
  
           {/* Head (separate for floating animation) */}
-          <g className={`avatar-head ${isThinking ? 'talking' : ''}`} id="avatarHead">
+          <g className={`avatar-head ${isTalking ? 'talking' : ''}`} id="avatarHead">
             {/* Neck */}
             <rect x="57" y="88" width="16" height="14" rx="4" fill="#f0d9a8"/>
             {/* Head */}
@@ -92,10 +91,10 @@ export default function AnimeCharacter({ isTalking }) {
             <ellipse cx="65" cy="72" rx="3" ry="2" fill="#e0b878"/>
             {/* Mouth */}
             <g id="mouthGroup">
-              <path d="M56 81 Q65 88 74 81" stroke="#c97040" strokeWidth="2" fill="none" strokeLinecap="round" id="smile" style={{ display: isThinking ? 'none' : 'block' }}/>
+              <path d="M56 81 Q65 88 74 81" stroke="#c97040" strokeWidth="2" fill="none" strokeLinecap="round" id="smile" style={{ display: isTalking ? 'none' : 'block' }}/>
               {/* Mouth open (for talking) */}
-              <ellipse cx="65" cy="83" rx="7" ry="4" fill="#c97040" id="mouthOpen" className="avatar-mouth talking" style={{ display: isThinking ? 'block' : 'none' }}/>
-              <ellipse cx="65" cy="82" rx="5" ry="2.5" fill="#fff" id="teeth" style={{ display: isThinking ? 'block' : 'none' }}/>
+              <ellipse cx="65" cy="83" rx="7" ry="4" fill="#c97040" id="mouthOpen" className="avatar-mouth talking" style={{ display: isTalking ? 'block' : 'none' }}/>
+              <ellipse cx="65" cy="82" rx="5" ry="2.5" fill="#fff" id="teeth" style={{ display: isTalking ? 'block' : 'none' }}/>
             </g>
           </g>
         </svg>
@@ -110,8 +109,8 @@ export default function AnimeCharacter({ isTalking }) {
           <div className="avatar-chip" title="Prof. Zen">🧑‍🔬</div>
         </div>
         <div className="avatar-status" id="avatarStatus">
-          <div className={`status-dot ${isThinking ? 'thinking' : ''}`} id="statusDot"></div>
-          <span id="statusText">{isThinking ? 'Thinking...' : 'Ready to help'}</span>
+          <div className={`status-dot ${isThinking || isTalking ? 'thinking' : ''}`} id="statusDot"></div>
+          <span id="statusText">{isThinking ? 'Thinking...' : isTalking ? 'Speaking...' : 'Ready to help'}</span>
         </div>
       </div>
     </div>

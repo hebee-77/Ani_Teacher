@@ -19,7 +19,7 @@ app.post('/api/stream', async (req, res) => {
   res.setHeader('Transfer-Encoding', 'chunked');
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
     const result = await model.generateContentStream(prompt);
 
     for await (const chunk of result.stream) {
@@ -30,7 +30,12 @@ app.post('/api/stream', async (req, res) => {
     res.end();
   } catch (error) {
     console.error("Streaming error:", error);
-    res.status(500).send("Error generating response");
+    if (!res.headersSent) {
+      res.status(500).send(`API Error: ${error.statusText || error.message}`);
+    } else {
+      res.write(`\n\n[API Error: ${error.statusText || error.message}]`);
+      res.end();
+    }
   }
 });
 

@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-export default function Chat({ setAvatarTalking }) {
+export default function Chat({ setAvatarThinking, setLatestAiMessage }) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -24,7 +24,7 @@ export default function Chat({ setAvatarTalking }) {
     setMessages(currentMessages);
     setInput('');
     setIsStreaming(true);
-    setAvatarTalking(true);
+    setAvatarThinking(true);
 
     // Add empty placeholder for AI response
     setMessages((prev) => [...prev, { role: 'ai', content: '' }]);
@@ -56,7 +56,7 @@ export default function Chat({ setAvatarTalking }) {
         }
       }
       
-      speakText(fullResponse);
+      setLatestAiMessage(fullResponse);
 
     } catch (error) {
       console.error("Error fetching stream:", error);
@@ -67,7 +67,7 @@ export default function Chat({ setAvatarTalking }) {
       });
     } finally {
       setIsStreaming(false);
-      setAvatarTalking(false);
+      setAvatarThinking(false);
     }
   };
 
@@ -76,15 +76,6 @@ export default function Chat({ setAvatarTalking }) {
       e.preventDefault();
       handleSend();
     }
-  };
-
-  const speakText = (text) => {
-    window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[*_#`~>]/g, ''); 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
   };
 
   return (

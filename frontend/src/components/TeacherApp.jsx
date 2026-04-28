@@ -7,7 +7,9 @@ export default function TeacherApp() {
   const { triggerTransition } = useTransition();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [avatarThinking, setAvatarThinking] = useState(false);
   const [avatarTalking, setAvatarTalking] = useState(false);
+  const [latestAiMessage, setLatestAiMessage] = useState('');
 
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
@@ -18,6 +20,28 @@ export default function TeacherApp() {
       document.body.classList.add('dark');
       document.documentElement.classList.add('dark');
     }
+  };
+
+  const handleAvatarClick = () => {
+    if (!latestAiMessage) return;
+    
+    if (avatarTalking) {
+      window.speechSynthesis.cancel();
+      setAvatarTalking(false);
+      return;
+    }
+    
+    window.speechSynthesis.cancel();
+    const cleanText = latestAiMessage.replace(/[*_#`~>]/g, ''); 
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    
+    utterance.onstart = () => setAvatarTalking(true);
+    utterance.onend = () => setAvatarTalking(false);
+    utterance.onerror = () => setAvatarTalking(false);
+    
+    window.speechSynthesis.speak(utterance);
   };
 
   return (
@@ -73,11 +97,18 @@ export default function TeacherApp() {
      
         {/* Main Panel contains Chat area */}
         <div className="main-panel">
-          <Chat setAvatarTalking={setAvatarTalking} />
+          <Chat 
+            setAvatarThinking={setAvatarThinking} 
+            setLatestAiMessage={setLatestAiMessage} 
+          />
         </div>
      
         {/* Avatar Panel */}
-        <AnimeCharacter isTalking={avatarTalking} />
+        <AnimeCharacter 
+          isTalking={avatarTalking} 
+          isThinking={avatarThinking}
+          onClick={handleAvatarClick} 
+        />
       </div>
     </div>
   );
