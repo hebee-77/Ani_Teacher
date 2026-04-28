@@ -19,7 +19,7 @@ app.post('/api/stream', async (req, res) => {
   res.setHeader('Transfer-Encoding', 'chunked');
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const result = await model.generateContentStream(prompt);
 
     for await (const chunk of result.stream) {
