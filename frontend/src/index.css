@@ -287,6 +287,15 @@ footer p { font-size: 13px; color: var(--text3); }
 }
 .back-btn:hover { background: var(--bg2); color: var(--text); }
 
+/* New Chat button in topbar */
+.new-chat-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: transparent; cursor: pointer;
+  font-size: 13px; color: var(--text2); font-family: var(--font); transition: all 0.2s;
+}
+.new-chat-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--border2); }
+
 /* App Layout */
 .app-layout { flex: 1; display: flex; overflow: hidden; }
 
@@ -321,7 +330,15 @@ footer p { font-size: 13px; color: var(--text3); }
 .sidebar.collapsed .nav-label { opacity: 0; max-width: 0; }
 .sidebar-section { padding: 4px 20px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-top: 8px; white-space: nowrap; overflow: hidden; transition: opacity 0.2s; }
 .sidebar.collapsed .sidebar-section { opacity: 0; }
-.sidebar-footer { padding: 12px; border-top: 1px solid var(--border); }
+.sidebar-footer { padding: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; }
+/* New Chat shortcut inside sidebar footer */
+.sidebar-new-chat {
+  display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 9px;
+  cursor: pointer; font-size: 14px; color: var(--text2); transition: all 0.2s; white-space: nowrap;
+  margin-bottom: 2px;
+}
+.sidebar-new-chat:hover { background: var(--bg3); color: var(--text); }
+.sidebar.collapsed .sidebar-new-chat .nav-label { opacity: 0; max-width: 0; overflow: hidden; }
 .theme-toggle {
   display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 9px;
   cursor: pointer; font-size: 14px; color: var(--text2); transition: all 0.2s; white-space: nowrap;
@@ -434,14 +451,102 @@ footer p { font-size: 13px; color: var(--text3); }
 .avatar-chip:hover { border-color: var(--text2); }
 
 /* History panel */
-.history-section { padding: 8px; }
-.history-item {
-  padding: 8px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 1px;
-  font-size: 13px; color: var(--text2); transition: all 0.2s; overflow: hidden;
-  text-overflow: ellipsis; white-space: nowrap;
+.history-badge {
+  margin-left: auto; background: var(--gold); color: #fff;
+  font-size: 10px; font-weight: 600; border-radius: 10px;
+  padding: 1px 6px; flex-shrink: 0; line-height: 1.6;
 }
-.history-item:hover { background: var(--bg3); color: var(--text); }
-.history-time { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* Dropdown that slides in below the History nav item */
+.history-dropdown {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s cubic-bezier(0.25,0.46,0.45,0.94),
+              opacity 0.25s ease;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 4px 8px 6px;
+}
+.history-dropdown.open {
+  max-height: 320px;
+  opacity: 1;
+}
+.history-dropdown-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px 6px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text3); font-weight: 500;
+}
+.history-clear-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 10px; color: var(--text3); font-family: var(--font);
+  padding: 2px 6px; border-radius: 4px; transition: all 0.2s;
+}
+.history-clear-btn:hover { color: var(--text); background: var(--bg3); }
+.history-entry {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 12px; cursor: pointer;
+  border-top: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.history-entry:hover { background: var(--bg3); }
+.history-entry.active-conv { background: var(--gold-light); }
+.history-entry.active-conv .history-entry-text { color: var(--text); font-weight: 500; }
+.history-entry-icon {
+  margin-top: 2px; color: var(--text3); flex-shrink: 0;
+}
+.history-entry-body { flex: 1; min-width: 0; }
+.history-entry-text {
+  font-size: 12.5px; color: var(--text2); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.history-entry:hover .history-entry-text { color: var(--text); }
+.history-entry-time {
+  font-size: 10px; color: var(--text3); margin-top: 2px;
+}
+.history-empty {
+  text-align: center; padding: 18px 12px; color: var(--text3);
+}
+.history-empty span { font-size: 18px; opacity: 0.4; display: block; margin-bottom: 6px; }
+.history-empty p { font-size: 12px; font-weight: 300; }
+
+/* Inline rename input */
+.history-rename-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 5px; padding: 2px 6px; font-size: 12.5px;
+  color: var(--text); font-family: var(--font); outline: none;
+  box-shadow: 0 0 0 2px rgba(201,168,76,0.25);
+}
+
+/* Right-click context menu */
+.ctx-menu {
+  position: fixed; z-index: 99999;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 140px;
+  animation: ctxFadeIn 0.12s ease;
+}
+@keyframes ctxFadeIn { from { opacity:0; transform:scale(0.95) } to { opacity:1; transform:scale(1) } }
+.ctx-menu-item {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 7px 12px; border-radius: 7px;
+  border: none; background: transparent; cursor: pointer;
+  font-size: 13px; color: var(--text2); font-family: var(--font);
+  text-align: left; transition: background 0.15s, color 0.15s;
+}
+.ctx-menu-item:hover { background: var(--bg3); color: var(--text); }
+.ctx-menu-item.danger { color: #e05555; }
+.ctx-menu-item.danger:hover { background: rgba(224,85,85,0.1); color: #e05555; }
+.ctx-menu-divider { height: 1px; background: var(--border); margin: 3px 4px; }
+
+/* Keep dropdown scrollable when there are many items */
+.history-dropdown.open { overflow-y: auto; }
+.history-dropdown::-webkit-scrollbar { width: 3px; }
+.history-dropdown::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
 /* Dark mode */
 .dark, body.dark {
